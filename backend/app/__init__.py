@@ -1,0 +1,2 @@
+"""Aplicación Chatbot RAG Local."""
+

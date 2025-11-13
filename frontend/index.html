@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="welcomeTitle">RAG Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="header-title">Chatbot RAG</h1>
+            <div class="header-actions">
+                <button class="new-chat-btn" id="newChatBtn" data-i18n-title="newChat">
+                    <span class="btn-icon">+</span>
+                    <span class="btn-text" data-i18n="newChat">New Chat</span>
+                </button>
+                <div class="language-selector" style="margin-left: 10px;">
+                    <select id="languageSelector" style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                        <option value="es" data-i18n="spanish">Español</option>
+                        <option value="en" data-i18n="english">English</option>
+                    </select>
+                </div>
+            </div>
+            <div class="header-controls">
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="docs" id="modeDocs">
+                        <span class="mode-icon">•</span>
+                        <span class="mode-text" data-i18n="documentation">Documentation</span>
+                    </button>
+                    <button class="mode-btn" data-mode="hybrid" id="modeHybrid">
+                        <span class="mode-icon">•</span>
+                        <span class="mode-text" data-i18n="hybrid">Hybrid</span>
+                    </button>
+                </div>
+                <div class="status-indicators">
+                    <div class="status-item">
+                        <span class="status-label" data-i18n="backend">Backend:</span>
+                        <span class="status-dot" id="backendStatus"></span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label" data-i18n="docs">Docs:</span>
+                        <span class="status-count" id="docCount">0</span>
+                    </div>
+                    <div class="status-item" id="searchEngineStatus" style="display: none;">
+                        <span class="status-label" data-i18n="search">Search:</span>
+                        <span class="status-text" id="searchEngineText">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor principal -->
+    <div class="main-container">
+        <!-- Left sidebar - Chats -->
+        <aside class="sidebar chats-sidebar" id="chatsSidebar">
+            <div class="sidebar-header">
+                <h2 data-i18n="chats">Chats</h2>
+                <button class="sidebar-toggle" id="chatsSidebarToggle" aria-label="Toggle chats sidebar">
+                    <span>‹</span>
+                </button>
+            </div>
+            
+            <div class="sidebar-content">
+                <button class="new-chat-sidebar-btn" id="newChatSidebarBtn">
+                    <span class="btn-icon">+</span>
+                    <span data-i18n="newChat">New Chat</span>
+                </button>
+                
+                <div class="chats-list" id="chatsList">
+                    <p class="empty-state" data-i18n="noChats">No chats</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Central sidebar - Document management -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 data-i18n="documents">Documents</h2>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span>‹</span>
+                </button>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Upload area -->
+                <div class="upload-section">
+                    <button class="upload-btn" id="uploadBtn">
+                        <span class="upload-icon">↑</span>
+                        <span data-i18n="uploadDocuments">Upload Documents</span>
+                    </button>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.txt,.docx" style="display: none;">
+                    <div class="drop-zone" id="dropZone">
+                        <p data-i18n="dragFilesHere">Drag files here</p>
+                        <p class="drop-zone-hint" data-i18n="clickToSelect">or click to select</p>
+                    </div>
+                </div>
+
+                <!-- Upload progress -->
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText" data-i18n="uploading">Uploading...</p>
+                </div>
+
+                <!-- Document list -->
+                <div class="documents-list" id="documentsList">
+                    <p class="empty-state" data-i18n="noDocuments">No documents loaded</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main chat area -->
+        <main class="chat-main" id="chatMain">
+            <div class="chat-container" id="chatContainer">
+                <div class="welcome-message">
+                    <h2 data-i18n="welcomeTitle">RAG Chatbot</h2>
+                    <p data-i18n="welcomeHelp">I can help you with:</p>
+                    <ul>
+                        <li data-i18n="welcomeItem1">Query your local documents</li>
+                        <li data-i18n="welcomeItem2">Search information on the internet</li>
+                        <li data-i18n="welcomeItem3">Answer questions combining both sources</li>
+                    </ul>
+                    <p class="welcome-hint" data-i18n="welcomeHint">Select a mode and start asking.</p>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="chatInput" 
+                        class="chat-input" 
+                        data-i18n-placeholder="placeholderDocs"
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn" data-i18n-title="sendMessage">
+                        <span class="send-icon">→</span>
+                    </button>
+                </div>
+                <div class="input-hint" id="inputHint" data-i18n="inputHint">
+                    Press Enter to send, Shift+Enter for new line
+                </div>
+            </div>
+
+            <!-- Loading indicator -->
+            <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+                <div class="spinner"></div>
+                <span id="loadingText" data-i18n="thinking">Thinking...</span>
+            </div>
+        </main>
+
+        <!-- Sources panel (collapsible) -->
+        <aside class="sources-panel" id="sourcesPanel">
+            <div class="sources-header">
+                <h2 data-i18n="sources">Sources</h2>
+                <button class="sources-toggle" id="sourcesToggle" aria-label="Toggle sources panel">
+                    <span>›</span>
+                </button>
+            </div>
+            <div class="sources-content" id="sourcesContent">
+                <p class="empty-state" data-i18n="sourcesPlaceholder">Sources will appear here after making a query</p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Notificaciones toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confirmation modal -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" data-i18n="confirmAction">Confirm action</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage" data-i18n="confirmMessage">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" id="modalCancel" data-i18n="cancel">Cancel</button>
+                <button class="modal-btn modal-btn-primary" id="modalConfirm" data-i18n="accept">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/i18n.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
