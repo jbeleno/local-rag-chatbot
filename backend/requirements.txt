@@ -1,64 +1,63 @@
-# FastAPI y servidor
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-python-multipart==0.0.6
+# ---------------- Web framework ----------------
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
 
-# LangChain y componentes RAG
-langchain==0.1.0
-langchain-community==0.0.10
+# ---------------- LangChain (RAG orchestration) ----------------
+# NOTE: Stay on 0.1.x for now — moving to 0.3.x changes the import paths
+# (chains/runnables refactor) and would require a code-level migration.
+# Tracked as deferred work in the README.
+langchain==0.1.20
+langchain-community==0.0.38
 
-# Ollama para LLM local
-ollama==0.1.7
+# ---------------- LLM client ----------------
+ollama==0.4.4
 
-# ChromaDB para vector store
-chromadb==0.4.18
+# ---------------- Vector store ----------------
+chromadb==0.5.23
 
-# Embeddings locales
-sentence-transformers>=2.3.0
-torch>=2.2.0
-transformers>=4.35.0
-huggingface-hub>=0.20.0
+# ---------------- Local embeddings ----------------
+sentence-transformers>=3.3.0
+torch>=2.5.0
+transformers>=4.46.0
+huggingface-hub>=0.26.0
 
-# Procesamiento de documentos
-PyPDF2==3.0.1
-python-docx==1.1.0
+# ---------------- Document parsing ----------------
+# pypdf is the actively maintained successor to PyPDF2 (same maintainer, same API).
+pypdf==5.1.0
+python-docx==1.1.2
 
-# Configuración y validación
-pydantic==2.5.0
-pydantic-settings==2.1.0
+# ---------------- Validation & config ----------------
+pydantic==2.10.4
+pydantic-settings==2.7.1
 
-# Utilidades
-python-dotenv==1.0.0
-httpx==0.25.2
+# ---------------- HTTP & utilities ----------------
+python-dotenv==1.0.1
+httpx==0.28.1
 
-# Búsqueda web
+# ---------------- Web search (DuckDuckGo) ----------------
 ddgs>=3.9.0
 
-# Logging y utilidades adicionales
-numpy==1.24.3
+# ---------------- Numerical ----------------
+# Pinned to 1.x because some upstream deps (transformers/torch ecosystem)
+# still ship wheels that mismatch with numpy 2.x in mixed installs.
+numpy<2
 
-# Base de datos
-psycopg2-binary>=2.9.9
-sqlalchemy>=2.0.0
-alembic>=1.12.0
+# ---------------- Persistence ----------------
+psycopg2-binary>=2.9.10
+sqlalchemy>=2.0.36
+alembic>=1.14.0
 
-# Testing
-pytest>=7.4.0
-pytest-asyncio>=0.21.0
-pytest-cov>=4.1.0
+# ---------------- Tokenizers ----------------
+tiktoken>=0.8.0
 
-# AI/ML avanzado
-tiktoken>=0.5.0
-# Nota: Las herramientas de evaluación están incluidas en langchain
-# langchain ya está instalado arriba
+# ---------------- Caching ----------------
+cachetools>=5.5.0
 
-# NLP para query expansion (opcional)
-# spacy>=3.7.0  # Descomentar si se quiere usar spaCy
-# python -m spacy download es_core_news_sm  # Ejecutar después de instalar
+# ---------------- Validation ----------------
+email-validator>=2.2.0
 
-# Caché
-cachetools>=5.3.0
-
-# Validación avanzada
-email-validator>=2.1.0
-
+# ---------------- Testing ----------------
+pytest>=8.3.0
+pytest-asyncio>=0.25.0
+pytest-cov>=6.0.0

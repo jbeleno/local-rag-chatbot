@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Dict, Tuple
 from datetime import datetime
 
-import PyPDF2
+import pypdf  # successor of PyPDF2 (same maintainer, drop-in API)
 from docx import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
@@ -47,7 +47,7 @@ class DocumentProcessor:
         try:
             text = ""
             with open(file_path, 'rb') as file:
-                pdf_reader = PyPDF2.PdfReader(file)
+                pdf_reader = pypdf.PdfReader(file)
                 for page in pdf_reader.pages:
                     text += page.extract_text() + "\n"
             logger.info(f"Texto extraído de PDF: {len(text)} caracteres")
